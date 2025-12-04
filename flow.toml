@@ -1,5 +1,8 @@
 version = 1
 
+[deps]
+fast = "github.com/1focus-ai/fast"
+
 [[tasks]]
 name = "setup"
 command = """
@@ -99,3 +102,28 @@ export UV_PYTHON="${UV_PYTHON:-$python_spec}"
 "$uv_bin" run --python "$python_spec" python mlx-model-install.py "$@"
 """
 description = "Launch the TUI helper to download MLX models."
+
+[[tasks]]
+name = "claude-sdk"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  echo "Install uv from https://docs.astral.sh/uv/getting-started/installation/"
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" -m cli.claude_sdk "$@"
+"""
+description = "Run Claude SDK CLI (passes CLI args through)."
+
+[[tasks]]
+name = "commit"
+command = "fast commitPush"
+description = "Commit with AI"
+dependencies = ["fast"]
+delegate_to_hub = true
