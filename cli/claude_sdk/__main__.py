@@ -1,10 +1,13 @@
 """Claude SDK CLI - wrapper over claude-agent-sdk."""
 
+import sys
+
 import typer
 from rich.console import Console
 from rich.table import Table
 
-from .sessions import list_sessions, get_session, get_session_messages, list_projects
+from .sessions import list_sessions, get_session_messages, list_projects
+from .run import run_task_sync
 
 app = typer.Typer(help="Claude SDK CLI - manage Claude sessions and more")
 console = Console()
@@ -141,6 +144,21 @@ def messages_cmd(
                         console.print(block.get("text", "")[:500])
                     elif block.get("type") == "tool_use":
                         console.print(f"\n[bold yellow]Tool:[/bold yellow] {block.get('name', 'unknown')}")
+
+
+@app.command("run")
+def run_cmd(
+    path: str = typer.Argument(..., help="Working directory path"),
+    task: str = typer.Argument(..., help="Task description for Claude"),
+    verbose: bool = typer.Option(False, "-v", "--verbose", help="Print progress output"),
+):
+    """Run a task autonomously in the given path.
+
+    Exits with code 0 on success, 1 on error.
+    Silent by default - only prints on error unless --verbose.
+    """
+    exit_code = run_task_sync(path, task, verbose)
+    raise typer.Exit(exit_code)
 
 
 def main():

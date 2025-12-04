@@ -122,6 +122,38 @@ export UV_PYTHON="${UV_PYTHON:-$python_spec}"
 description = "Run Claude SDK CLI (passes CLI args through)."
 
 [[tasks]]
+name = "deploy"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+INSTALL_DIR="${INSTALL_DIR:-$HOME/bin}"
+mkdir -p "${INSTALL_DIR}"
+
+# Sync dependencies first
+"$uv_bin" sync --python "$python_spec"
+
+# Get the venv bin path
+VENV_BIN="$(pwd)/.venv/bin"
+
+# Symlink claude-sdk
+TARGET="${INSTALL_DIR}/claude-sdk"
+echo "Linking ${TARGET} -> ${VENV_BIN}/claude-sdk"
+rm -f "${TARGET}"
+ln -s "${VENV_BIN}/claude-sdk" "${TARGET}"
+
+echo "Deployed claude-sdk to ${TARGET}"
+echo "Ensure ${INSTALL_DIR} is on your PATH"
+"""
+description = "Deploy claude-sdk CLI to ~/bin"
+
+[[tasks]]
 name = "commit"
 command = "fast commitPush"
 description = "Commit with AI"
