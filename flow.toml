@@ -154,6 +154,108 @@ echo "Ensure ${INSTALL_DIR} is on your PATH"
 description = "Deploy claude-sdk CLI to ~/bin"
 
 [[tasks]]
+name = "infra"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" -m infra "$@"
+"""
+description = "Prime Intellect GPU provisioning CLI"
+
+[[tasks]]
+name = "mlx"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" -m learn_mlx."${1:-basics}" "${@:2}"
+"""
+description = "Run MLX learning modules (basics, internals, training)"
+
+[[tasks]]
+name = "neurips"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" -m scrape.neurips "$@"
+"""
+description = "Scrape NeurIPS papers (--limit N, --json, --year YYYY)"
+
+[[tasks]]
+name = "learn"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" python learn/"${1:-positional_encoding}".py "${@:2}"
+"""
+description = "Run learning scripts (positional_encoding, etc)"
+
+[[tasks]]
+name = "nn"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" -m learn.neural-networks."${1:-01_positional_encoding}" "${@:2}"
+"""
+description = "Run neural network lessons (01_positional_encoding, 02_attention, etc)"
+
+[[tasks]]
+name = "neurips2025"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" -m scrape.neurips2025 "$@"
+"""
+description = "Download NeurIPS 2025 papers + PDFs (--limit N, --pdfs-only, --delay N)"
+
+[[tasks]]
 name = "commit"
 command = "fast commitPush"
 description = "Commit with AI"
