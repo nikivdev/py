@@ -1,7 +1,5 @@
 version = 1
-
-[deps]
-fast = "github.com/1focus-ai/fast"
+name = "py"
 
 [[tasks]]
 name = "setup"
@@ -254,10 +252,3 @@ export UV_PYTHON="${UV_PYTHON:-$python_spec}"
 "$uv_bin" run --python "$python_spec" -m scrape.neurips2025 "$@"
 """
 description = "Download NeurIPS 2025 papers + PDFs (--limit N, --pdfs-only, --delay N)"
-
-[[tasks]]
-name = "commit"
-command = "fast commitPush"
-description = "Commit with AI"
-dependencies = ["fast"]
-delegate_to_hub = true
