@@ -120,6 +120,23 @@ export UV_PYTHON="${UV_PYTHON:-$python_spec}"
 description = "Run Claude SDK CLI (passes CLI args through)."
 
 [[tasks]]
+name = "codex-sdk"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" -m cli.codex_sdk "$@"
+"""
+description = "Run Codex SDK CLI (passes CLI args through)."
+
+[[tasks]]
 name = "deploy"
 command = """
 set -euo pipefail
@@ -181,6 +198,37 @@ ln -s "${VENV_BIN}/claude-sdk" "${TARGET}"
 echo "Deployed claude-py to ${TARGET}"
 """
 description = "Deploy claude-sdk CLI as 'claude-py' to ~/bin"
+
+[[tasks]]
+name = "deploy-codex-py"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+INSTALL_DIR="${INSTALL_DIR:-$HOME/bin}"
+mkdir -p "${INSTALL_DIR}"
+
+# Sync dependencies first
+"$uv_bin" sync --python "$python_spec"
+
+# Get the venv bin path
+VENV_BIN="$(pwd)/.venv/bin"
+
+# Symlink as codex-py
+TARGET="${INSTALL_DIR}/codex-py"
+echo "Linking ${TARGET} -> ${VENV_BIN}/codex-sdk"
+rm -f "${TARGET}"
+ln -s "${VENV_BIN}/codex-sdk" "${TARGET}"
+
+echo "Deployed codex-py to ${TARGET}"
+"""
+description = "Deploy codex-sdk CLI as 'codex-py' to ~/bin"
 
 [[tasks]]
 name = "infra"
