@@ -152,6 +152,37 @@ echo "Ensure ${INSTALL_DIR} is on your PATH"
 description = "Deploy claude-sdk CLI to ~/bin"
 
 [[tasks]]
+name = "deploy-claude-py"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+INSTALL_DIR="${INSTALL_DIR:-$HOME/bin}"
+mkdir -p "${INSTALL_DIR}"
+
+# Sync dependencies first
+"$uv_bin" sync --python "$python_spec"
+
+# Get the venv bin path
+VENV_BIN="$(pwd)/.venv/bin"
+
+# Symlink as claude-py
+TARGET="${INSTALL_DIR}/claude-py"
+echo "Linking ${TARGET} -> ${VENV_BIN}/claude-sdk"
+rm -f "${TARGET}"
+ln -s "${VENV_BIN}/claude-sdk" "${TARGET}"
+
+echo "Deployed claude-py to ${TARGET}"
+"""
+description = "Deploy claude-sdk CLI as 'claude-py' to ~/bin"
+
+[[tasks]]
 name = "infra"
 command = """
 set -euo pipefail

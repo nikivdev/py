@@ -6,7 +6,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from .sessions import list_sessions, get_session_messages, list_projects
+from .sessions import list_sessions, get_session_messages, list_projects, get_last_session_for_path, list_sessions_for_path
 from .run import run_task_sync
 
 app = typer.Typer(help="Claude SDK CLI - manage Claude sessions and more")
@@ -159,6 +159,84 @@ def run_cmd(
     """
     exit_code = run_task_sync(path, task, verbose)
     raise typer.Exit(exit_code)
+
+
+@app.command("last")
+def last_cmd(
+    path: str = typer.Argument(".", help="Project path (defaults to current directory)"),
+    id_only: bool = typer.Option(False, "--id", "-i", help="Only output the session ID (for scripting)"),
+    resume_cmd: bool = typer.Option(False, "--resume", "-r", help="Output the claude --resume command"),
+):
+    """Get the last session for a given path.
+
+    Useful for reconnecting to a session after closing Cursor.
+
+    Examples:
+        claude-sdk last ~/projects/myapp
+        claude-sdk last . --id
+        claude-sdk last --resume | pbcopy
+    """
+    session = get_last_session_for_path(path)
+
+    if not session:
+        if not id_only:
+            console.print(f"[red]No sessions found for path: {path}[/red]")
+        raise typer.Exit(1)
+
+    if id_only:
+        # Just print the ID for scripting
+        print(session.id)
+    elif resume_cmd:
+        # Print the command to resume this session
+        print(f"claude --resume {session.id}")
+    else:
+        # Pretty output
+        console.print(f"[bold]Session ID:[/bold] {session.id}")
+        console.print(f"[bold]Project:[/bold] {session.project}")
+        console.print(f"[bold]Messages:[/bold] {session.message_count}")
+        if session.updated_at:
+            console.print(f"[bold]Last updated:[/bold] {session.updated_at.strftime('%Y-%m-%d %H:%M:%S')}")
+        if session.display_name:
+            console.print(f"[bold]Name:[/bold] {session.display_name}")
+        console.print()
+        console.print(f"[dim]Resume with:[/dim] claude --resume {session.id}")
+
+
+@app.command("for-path")
+def for_path_cmd(
+    path: str = typer.Argument(".", help="Project path (defaults to current directory)"),
+    limit: int = typer.Option(10, "-n", "--limit", help="Maximum sessions to show"),
+):
+    """List all sessions for a given path.
+
+    Examples:
+        claude-sdk for-path ~/projects/myapp
+        claude-sdk for-path . -n 5
+    """
+    sessions = list_sessions_for_path(path, limit=limit)
+
+    if not sessions:
+        console.print(f"[yellow]No sessions found for path: {path}[/yellow]")
+        return
+
+    table = Table(title=f"Sessions for {path}")
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Name", style="green")
+    table.add_column("Messages", justify="right")
+    table.add_column("Updated", style="yellow")
+
+    for session in sessions:
+        updated = session.updated_at.strftime("%Y-%m-%d %H:%M") if session.updated_at else "-"
+        table.add_row(
+            session.id[:8],
+            session.display_name,
+            str(session.message_count),
+            updated,
+        )
+
+    console.print(table)
+    console.print()
+    console.print(f"[dim]Resume latest with:[/dim] claude --resume {sessions[0].id}")
 
 
 def main():

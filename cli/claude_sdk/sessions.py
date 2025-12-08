@@ -209,3 +209,110 @@ def get_session_messages(session_id: str) -> list[dict]:
                 continue
 
     return messages
+
+
+def encode_project_path(path: str) -> str:
+    """Encode a path to project directory name format."""
+    # Normalize path (resolve ~, remove trailing slashes)
+    resolved = Path(path).expanduser().resolve()
+    return str(resolved).replace("/", "-").lstrip("-")
+
+
+def get_last_session_for_path(path: str) -> Session | None:
+    """Get the most recent session for a given project path.
+
+    Args:
+        path: The project path (can be relative, absolute, or with ~)
+
+    Returns:
+        The most recent session for that path, or None if not found
+    """
+    projects_dir = get_projects_dir()
+    if not projects_dir.exists():
+        return None
+
+    # Normalize the input path
+    resolved_path = Path(path).expanduser().resolve()
+    normalized = str(resolved_path)
+
+    # Find matching project directory
+    # The directory name is the path with / replaced by -
+    encoded = encode_project_path(path)
+    project_dir = projects_dir / encoded
+
+    if not project_dir.exists():
+        # Try to find by matching decoded paths (in case of slight differences)
+        for entry in projects_dir.iterdir():
+            if entry.is_dir():
+                decoded = decode_project_path(entry.name)
+                if decoded == normalized or decoded.rstrip("/") == normalized.rstrip("/"):
+                    project_dir = entry
+                    break
+        else:
+            return None
+
+    # Find all sessions in this project
+    sessions = []
+    for session_file in project_dir.glob("*.jsonl"):
+        # Skip agent sessions
+        if session_file.stem.startswith("agent-"):
+            continue
+        session = parse_session_file(session_file)
+        if session:
+            sessions.append(session)
+
+    if not sessions:
+        return None
+
+    # Return the most recently updated session
+    min_dt = datetime.min.replace(tzinfo=timezone.utc)
+    sessions.sort(key=lambda s: s.updated_at or min_dt, reverse=True)
+    return sessions[0]
+
+
+def list_sessions_for_path(path: str, limit: int = 10) -> list[Session]:
+    """List all sessions for a given project path, sorted by most recent.
+
+    Args:
+        path: The project path (can be relative, absolute, or with ~)
+        limit: Maximum number of sessions to return
+
+    Returns:
+        List of sessions for that path, sorted by updated_at descending
+    """
+    projects_dir = get_projects_dir()
+    if not projects_dir.exists():
+        return []
+
+    # Normalize the input path
+    resolved_path = Path(path).expanduser().resolve()
+    normalized = str(resolved_path)
+
+    # Find matching project directory
+    encoded = encode_project_path(path)
+    project_dir = projects_dir / encoded
+
+    if not project_dir.exists():
+        # Try to find by matching decoded paths
+        for entry in projects_dir.iterdir():
+            if entry.is_dir():
+                decoded = decode_project_path(entry.name)
+                if decoded == normalized or decoded.rstrip("/") == normalized.rstrip("/"):
+                    project_dir = entry
+                    break
+        else:
+            return []
+
+    # Find all sessions in this project
+    sessions = []
+    for session_file in project_dir.glob("*.jsonl"):
+        if session_file.stem.startswith("agent-"):
+            continue
+        session = parse_session_file(session_file)
+        if session:
+            sessions.append(session)
+
+    # Sort by most recent
+    min_dt = datetime.min.replace(tzinfo=timezone.utc)
+    sessions.sort(key=lambda s: s.updated_at or min_dt, reverse=True)
+    return sessions[:limit]
