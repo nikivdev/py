@@ -1,0 +1,359 @@
+version = 1
+
+[deps]
+node = "node"
+pnpm = "pnpm"
+docker = "docker"
+fast = "github.com/1focus-ai/fast"
+
+[[tasks]]
+name = "setup"
+command = """
+set -euo pipefail
+
+ROOT="$(pwd)"
+WEB_DIR="$ROOT/packages/web"
+ENV_FILE="$WEB_DIR/.env"
+EXAMPLE_FILE="$WEB_DIR/.env.example"
+
+if [ ! -f "$ENV_FILE" ]; then
+  cp "$EXAMPLE_FILE" "$ENV_FILE"
+  echo "Created $ENV_FILE from template."
+fi
+
+node - <<'NODE'
+const fs = require("fs")
+const path = require("path")
+const crypto = require("crypto")
+
+const envPath = path.join("packages", "web", ".env")
+let text = fs.readFileSync(envPath, "utf8")
+
+const ensureKey = (key, value, shouldReplace = () => false) => {
+  const pattern = new RegExp(`^${key}=.*$`, "m")
+  if (pattern.test(text)) {
+    const current = text.match(pattern)[0].split("=")[1]
+    if (current.trim() === "" || shouldReplace(current.trim())) {
+      text = text.replace(pattern, `${key}=${value}`)
+      console.log(`Set ${key}`)
+    }
+  } else {
+    text += `\\n${key}=${value}\\n`
+    console.log(`Added ${key}`)
+  }
+}
+
+ensureKey(
+  "BETTER_AUTH_SECRET",
+  crypto.randomBytes(32).toString("hex"),
+  (current) => current === "your-strong-secret"
+)
+ensureKey("APP_BASE_URL", "http://localhost:8712")
+ensureKey(
+  "DATABASE_URL",
+  "postgresql://postgres:password@db.localtest.me:5432/electric",
+  (current) =>
+    current === "postgresql://user:password@host:5432/dbname" ||
+    /user:password@host:5432/.test(current)
+)
+ensureKey(
+  "ELECTRIC_URL",
+  "http://localhost:3100",
+  (current) => current.includes("electric.example.com")
+)
+
+fs.writeFileSync(envPath, text)
+NODE
+
+pnpm install
+
+echo ""
+echo "Setup complete."
+echo ""
+echo "Next steps:"
+echo "  1. Run 'f local-services' to start Postgres, Neon proxy, and Electric"
+echo "  2. Run 'f dev' to start the web server"
+"""
+description = "Prepare dev env: ensure web/.env exists with secrets and install dependencies."
+dependencies = ["node", "pnpm"]
+shortcuts = ["s"]
+
+[[tasks]]
+name = "seed"
+command = """
+set -euo pipefail
+
+ROOT="$(pwd)"
+WEB_DIR="$ROOT/packages/web"
+ENV_FILE="$WEB_DIR/.env"
+
+if [ ! -f "$ENV_FILE" ]; then
+  echo "Missing $ENV_FILE. Run 'f setup' first."
+  exit 1
+fi
+
+set -a
+. "$ENV_FILE"
+set +a
+
+if [ -z "${DATABASE_URL:-}" ] || [[ "$DATABASE_URL" == "postgresql://user:password@host:5432/dbname" ]]; then
+  echo "DATABASE_URL is not set or still placeholder in $ENV_FILE"
+  exit 1
+fi
+
+pnpm --filter @gen/web install --silent --ignore-scripts
+pnpm --filter @gen/web run seed
+"""
+description = "Seed the database with demo user/chat data (requires DATABASE_URL set)."
+dependencies = ["node", "pnpm"]
+
+[[tasks]]
+name = "dev"
+command = """
+set -euo pipefail
+echo "Starting web dev server on http://localhost:8712"
+echo "Learn transformers: http://localhost:8712/learn"
+echo ""
+pnpm --filter @gen/web run dev
+"""
+description = "Start the web dev server on port 8712."
+dependencies = ["node", "pnpm"]
+shortcuts = ["d"]
+
+[[tasks]]
+name = "learn"
+command = """
+set -euo pipefail
+echo "Opening transformer visualizations..."
+echo ""
+echo "Starting server on http://localhost:8712/learn"
+echo ""
+# Open browser after a short delay
+(sleep 2 && open "http://localhost:8712/learn" 2>/dev/null || true) &
+pnpm --filter @gen/web run dev
+"""
+description = "Start web server and open transformer learn visualizations."
+dependencies = ["node", "pnpm"]
+shortcuts = ["l"]
+
+[[tasks]]
+name = "deploy"
+command = """
+set -euo pipefail
+
+echo "=== Production Deployment ==="
+echo ""
+echo "This will deploy to Cloudflare Workers."
+echo "Make sure you have configured secrets first (see docs/production-setup.md)"
+echo ""
+
+# Check if wrangler is logged in
+if ! pnpm --filter @gen/web exec wrangler whoami >/dev/null 2>&1; then
+  echo "Not logged in to Cloudflare. Running wrangler login..."
+  pnpm --filter @gen/web exec wrangler login
+fi
+
+echo ""
+echo "Deploying worker..."
+pnpm deploy:worker
+
+echo ""
+echo "Deploying web..."
+pnpm deploy:web
+
+echo ""
+echo "=== Deployment Complete ==="
+"""
+description = "Deploy both worker and web to Cloudflare Workers."
+dependencies = ["node", "pnpm"]
+shortcuts = ["p"]
+
+[[tasks]]
+name = "deploy-setup"
+command = """
+set -euo pipefail
+
+echo "=== Production Secrets Setup ==="
+echo ""
+echo "This will configure Cloudflare Workers secrets for production."
+echo "You'll need:"
+echo "  - PlanetScale PostgreSQL DATABASE_URL"
+echo "  - BETTER_AUTH_SECRET (will generate if empty)"
+echo "  - Electric Cloud URL and credentials"
+echo "  - OpenAI API key (optional)"
+echo ""
+
+cd packages/web
+
+# Check if wrangler is logged in
+if ! pnpm exec wrangler whoami >/dev/null 2>&1; then
+  echo "Not logged in to Cloudflare. Running wrangler login..."
+  pnpm exec wrangler login
+fi
+
+echo ""
+read -p "Enter your PlanetScale PostgreSQL DATABASE_URL: " DATABASE_URL
+if [ -n "$DATABASE_URL" ]; then
+  echo "$DATABASE_URL" | pnpm exec wrangler secret put DATABASE_URL
+  echo "✓ DATABASE_URL set"
+fi
+
+echo ""
+read -p "Enter BETTER_AUTH_SECRET (leave empty to generate): " BETTER_AUTH_SECRET
+if [ -z "$BETTER_AUTH_SECRET" ]; then
+  BETTER_AUTH_SECRET=$(openssl rand -hex 32)
+  echo "Generated: $BETTER_AUTH_SECRET"
+fi
+echo "$BETTER_AUTH_SECRET" | pnpm exec wrangler secret put BETTER_AUTH_SECRET
+echo "✓ BETTER_AUTH_SECRET set"
+
+echo ""
+read -p "Enter your production APP_BASE_URL (e.g., https://app.example.com): " APP_BASE_URL
+if [ -n "$APP_BASE_URL" ]; then
+  pnpm exec wrangler vars put APP_BASE_URL "$APP_BASE_URL"
+  echo "✓ APP_BASE_URL set"
+fi
+
+echo ""
+read -p "Enter ELECTRIC_URL: " ELECTRIC_URL
+if [ -n "$ELECTRIC_URL" ]; then
+  echo "$ELECTRIC_URL" | pnpm exec wrangler secret put ELECTRIC_URL
+  echo "✓ ELECTRIC_URL set"
+fi
+
+echo ""
+read -p "Enter ELECTRIC_SOURCE_ID (leave empty if not using Electric Cloud): " ELECTRIC_SOURCE_ID
+if [ -n "$ELECTRIC_SOURCE_ID" ]; then
+  echo "$ELECTRIC_SOURCE_ID" | pnpm exec wrangler secret put ELECTRIC_SOURCE_ID
+  echo "✓ ELECTRIC_SOURCE_ID set"
+fi
+
+echo ""
+read -p "Enter ELECTRIC_SOURCE_SECRET (leave empty if not using Electric Cloud): " ELECTRIC_SOURCE_SECRET
+if [ -n "$ELECTRIC_SOURCE_SECRET" ]; then
+  echo "$ELECTRIC_SOURCE_SECRET" | pnpm exec wrangler secret put ELECTRIC_SOURCE_SECRET
+  echo "✓ ELECTRIC_SOURCE_SECRET set"
+fi
+
+echo ""
+read -p "Enter OPENAI_API_KEY (leave empty to skip): " OPENAI_API_KEY
+if [ -n "$OPENAI_API_KEY" ]; then
+  echo "$OPENAI_API_KEY" | pnpm exec wrangler secret put OPENAI_API_KEY
+  echo "✓ OPENAI_API_KEY set"
+fi
+
+echo ""
+echo "=== Setup Complete ==="
+echo ""
+echo "Run 'f deploy' to deploy to production."
+"""
+description = "Interactive setup for Cloudflare Workers production secrets."
+dependencies = ["node", "pnpm"]
+shortcuts = ["ps"]
+
+[[tasks]]
+name = "local-services"
+command = """
+set -euo pipefail
+
+echo "Starting local services via docker-compose..."
+
+cd packages/web
+docker compose up -d
+
+# Wait for postgres to be healthy
+echo "Waiting for Postgres to be ready..."
+sleep 5
+
+# Create tables if they don't exist
+docker exec -i gen-postgres psql -U postgres -d electric -c "
+-- Better-auth tables (camelCase columns)
+CREATE TABLE IF NOT EXISTS users (
+  id text PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  \"emailVerified\" boolean NOT NULL DEFAULT false,
+  image text,
+  \"createdAt\" timestamp NOT NULL DEFAULT now(),
+  \"updatedAt\" timestamp NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS sessions (
+  id text PRIMARY KEY,
+  \"expiresAt\" timestamp NOT NULL,
+  token text NOT NULL UNIQUE,
+  \"createdAt\" timestamp NOT NULL,
+  \"updatedAt\" timestamp NOT NULL,
+  \"ipAddress\" text,
+  \"userAgent\" text,
+  \"userId\" text NOT NULL REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS accounts (
+  id text PRIMARY KEY,
+  \"accountId\" text NOT NULL,
+  \"providerId\" text NOT NULL,
+  \"userId\" text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  \"accessToken\" text,
+  \"refreshToken\" text,
+  \"idToken\" text,
+  \"accessTokenExpiresAt\" timestamp,
+  \"refreshTokenExpiresAt\" timestamp,
+  scope text,
+  password text,
+  \"createdAt\" timestamp NOT NULL,
+  \"updatedAt\" timestamp NOT NULL
+);
+CREATE TABLE IF NOT EXISTS verifications (
+  id text PRIMARY KEY,
+  identifier text NOT NULL,
+  value text NOT NULL,
+  \"expiresAt\" timestamp NOT NULL,
+  \"createdAt\" timestamp DEFAULT now(),
+  \"updatedAt\" timestamp DEFAULT now()
+);
+-- App tables (snake_case for Electric sync)
+CREATE TABLE IF NOT EXISTS chat_threads (
+  id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  title text NOT NULL,
+  user_id text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  thread_id integer NOT NULL REFERENCES chat_threads(id) ON DELETE CASCADE,
+  role varchar(32) NOT NULL,
+  content text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+" >/dev/null 2>&1
+echo "✓ Database tables ready"
+
+echo ""
+echo "Local services ready:"
+echo "  - Postgres: postgresql://postgres:password@db.localtest.me:5432/electric"
+echo "  - Neon HTTP Proxy: http://localhost:4444"
+echo "  - Electric: http://localhost:3100"
+echo ""
+echo "Run 'f dev' to start the web server."
+"""
+description = "Start local Postgres, Neon proxy, and Electric services for development."
+dependencies = ["docker"]
+shortcuts = ["ls"]
+
+[[tasks]]
+name = "stop-services"
+command = """
+echo "Stopping local services..."
+cd packages/web
+docker compose down
+echo "✓ Services stopped"
+"""
+description = "Stop local Postgres, Neon proxy, and Electric services."
+dependencies = ["docker"]
+shortcuts = ["ss"]
+
+[[tasks]]
+name = "commit"
+command = "fast commitPush"
+description = "Commit with AI"
+dependencies = ["fast"]
+delegate_to_hub = true

@@ -294,9 +294,34 @@ if ! command -v "$uv_bin" >/dev/null 2>&1; then
 fi
 
 export UV_PYTHON="${UV_PYTHON:-$python_spec}"
-"$uv_bin" run --python "$python_spec" python learn/"${1:-positional_encoding}".py "${@:2}"
+
+arg="${1:-transformers}"
+
+# Route to transformers lessons
+case "$arg" in
+  1|embed|embeddings)     cd learn/transformers && "$uv_bin" run --python "$python_spec" python 01_embeddings_positional.py; exit ;;
+  2|attn|attention)       cd learn/transformers && "$uv_bin" run --python "$python_spec" python 02_self_attention.py; exit ;;
+  3|multi|multihead)      cd learn/transformers && "$uv_bin" run --python "$python_spec" python 03_multi_head_attention.py; exit ;;
+  4|ffn|feedforward)      cd learn/transformers && "$uv_bin" run --python "$python_spec" python 04_feed_forward.py; exit ;;
+  5|block)                cd learn/transformers && "$uv_bin" run --python "$python_spec" python 05_transformer_block.py; exit ;;
+  6|full|transformer)     cd learn/transformers && "$uv_bin" run --python "$python_spec" python 06_full_transformer.py; exit ;;
+  7|train|training)       cd learn/transformers && "$uv_bin" run --python "$python_spec" python 07_training_demo.py; exit ;;
+  transformers|all)
+    cd learn/transformers
+    for f in 0*.py; do
+      echo "════════════════════════════════════════════════════════════════"
+      echo "  $f"
+      echo "════════════════════════════════════════════════════════════════"
+      "$uv_bin" run --python "$python_spec" python "$f"
+      echo ""
+    done
+    exit ;;
+esac
+
+# Fallback to old behavior for other learn scripts
+"$uv_bin" run --python "$python_spec" python learn/"${1}".py "${@:2}"
 """
-description = "Run learning scripts (positional_encoding, etc)"
+description = "Run learning scripts (1-7 for transformers, or script name)"
 
 [[tasks]]
 name = "nn"
@@ -331,3 +356,59 @@ export UV_PYTHON="${UV_PYTHON:-$python_spec}"
 "$uv_bin" run --python "$python_spec" -m scrape.neurips2025 "$@"
 """
 description = "Download NeurIPS 2025 papers + PDFs (--limit N, --pdfs-only, --delay N)"
+
+[[tasks]]
+name = "transformers"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+cd learn/transformers
+
+# Map short names to files
+case "${1:-all}" in
+  1|embed|embeddings)     file="01_embeddings_positional.py" ;;
+  2|attn|attention)       file="02_self_attention.py" ;;
+  3|multi|multihead)      file="03_multi_head_attention.py" ;;
+  4|ffn|feedforward)      file="04_feed_forward.py" ;;
+  5|block)                file="05_transformer_block.py" ;;
+  6|full|transformer)     file="06_full_transformer.py" ;;
+  7|train|training)       file="07_training_demo.py" ;;
+  all)
+    echo "Running all transformer lessons..."
+    for f in 0*.py; do
+      echo ""
+      echo "════════════════════════════════════════════════════════════════"
+      echo "  $f"
+      echo "════════════════════════════════════════════════════════════════"
+      "$uv_bin" run --python "$python_spec" python "$f"
+      echo ""
+      read -p "Press Enter to continue to next lesson..." || true
+    done
+    exit 0
+    ;;
+  *)
+    echo "Usage: flow run transformers [1-7|all]"
+    echo ""
+    echo "Lessons:"
+    echo "  1, embed     - Embeddings + Positional Encoding"
+    echo "  2, attn      - Self-Attention (Q, K, V)"
+    echo "  3, multi     - Multi-Head Attention"
+    echo "  4, ffn       - Feed-Forward Network"
+    echo "  5, block     - Transformer Block (Residuals, LayerNorm)"
+    echo "  6, full      - Full Encoder/Decoder Architecture"
+    echo "  7, train     - Training Demo (learn the +1 pattern)"
+    echo "  all          - Run all lessons sequentially"
+    exit 0
+    ;;
+esac
+
+"$uv_bin" run --python "$python_spec" python "$file"
+"""
+description = "Transformer deep-dive lessons (1-7, all, or topic name)"

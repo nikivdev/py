@@ -83,6 +83,55 @@ tasks:
         export UV_PYTHON="${UV_PYTHON:-{{.python_spec}}}"
         {{.uv_bin}} run --python '{{.python_spec}}' -m cli.snapvision{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
 
+  transformers:
+    desc: "Transformer deep-dive lessons (1-7, all, or: embed, attn, multi, ffn, block, full, train)"
+    silent: true
+    deps:
+      - task: .ensure-tools
+    cmds:
+      - |
+        set -euo pipefail
+        cd learn/transformers
+        arg="{{.CLI_ARGS}}"
+        arg="${arg:-all}"
+        case "$arg" in
+          1|embed|embeddings)     file="01_embeddings_positional.py" ;;
+          2|attn|attention)       file="02_self_attention.py" ;;
+          3|multi|multihead)      file="03_multi_head_attention.py" ;;
+          4|ffn|feedforward)      file="04_feed_forward.py" ;;
+          5|block)                file="05_transformer_block.py" ;;
+          6|full|transformer)     file="06_full_transformer.py" ;;
+          7|train|training)       file="07_training_demo.py" ;;
+          all)
+            echo "Running all transformer lessons..."
+            for f in 0*.py; do
+              echo ""
+              echo "════════════════════════════════════════════════════════════════"
+              echo "  $f"
+              echo "════════════════════════════════════════════════════════════════"
+              {{.uv_bin}} run --python '{{.python_spec}}' python "$f"
+              echo ""
+              read -p "Press Enter for next lesson..." </dev/tty || true
+            done
+            exit 0
+            ;;
+          *)
+            echo "Usage: task transformers -- [1-7|all|topic]"
+            echo ""
+            echo "Lessons:"
+            echo "  1, embed     - Embeddings + Positional Encoding"
+            echo "  2, attn      - Self-Attention (Q, K, V)"
+            echo "  3, multi     - Multi-Head Attention"
+            echo "  4, ffn       - Feed-Forward Network"
+            echo "  5, block     - Transformer Block (Residuals, LayerNorm)"
+            echo "  6, full      - Full Encoder/Decoder Architecture"
+            echo "  7, train     - Training Demo"
+            echo "  all          - Run all lessons sequentially"
+            exit 0
+            ;;
+        esac
+        {{.uv_bin}} run --python '{{.python_spec}}' python "$file"
+
   deploy:
     desc: Install a wrapper script that runs the Flow CLI through uv.
     silent: true
