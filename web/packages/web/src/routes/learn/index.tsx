@@ -10,42 +10,49 @@ const lessons = [
     title: "Embeddings + Positional Encoding",
     desc: "How words become vectors, and how position is encoded",
     color: "from-blue-500 to-cyan-500",
+    path: "/learn/1-embeddings",
   },
   {
     id: 2,
     title: "Self-Attention (Q, K, V)",
     desc: "The heart of transformers - how words attend to each other",
     color: "from-purple-500 to-pink-500",
+    path: "/learn/2-attention",
   },
   {
     id: 3,
     title: "Multi-Head Attention",
     desc: "Running attention in parallel to capture different relationships",
     color: "from-orange-500 to-red-500",
+    path: "/learn/3-multihead",
   },
   {
     id: 4,
     title: "Feed-Forward Network",
     desc: "The 'thinking' phase - where knowledge is stored",
     color: "from-green-500 to-emerald-500",
+    path: "/learn/4-ffn",
   },
   {
     id: 5,
     title: "Transformer Block",
     desc: "Residual connections and layer normalization",
     color: "from-yellow-500 to-orange-500",
+    path: "/learn/5-block",
   },
   {
     id: 6,
     title: "Full Architecture",
     desc: "Encoder vs Decoder - BERT vs GPT",
     color: "from-indigo-500 to-purple-500",
+    path: "/learn/6-full",
   },
   {
     id: 7,
     title: "Training Demo",
     desc: "Watch weights learn through backpropagation",
     color: "from-rose-500 to-pink-500",
+    path: "/learn/7-training",
   },
 ]
 
@@ -66,7 +73,7 @@ function LearnIndex() {
         {lessons.map((lesson) => (
           <Link
             key={lesson.id}
-            to={`/learn/${lesson.id}-${lesson.title.split(" ")[0].toLowerCase()}`}
+            to={lesson.path}
             className="group relative overflow-hidden rounded-xl bg-slate-900 border border-slate-800 p-6 hover:border-slate-700 transition-all hover:scale-[1.02]"
           >
             <div
