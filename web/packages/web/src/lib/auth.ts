@@ -6,8 +6,8 @@ import { getAuthDb } from "@/db/connection"
 import * as schema from "@/db/schema"
 
 type AuthEnv = {
-  DATABASE_URL: string
-  BETTER_AUTH_SECRET: string
+  DATABASE_URL?: string
+  BETTER_AUTH_SECRET?: string
   APP_BASE_URL?: string
 }
 
@@ -39,18 +39,20 @@ const getEnv = (): AuthEnv => {
   BETTER_AUTH_SECRET = BETTER_AUTH_SECRET ?? process.env.BETTER_AUTH_SECRET
   APP_BASE_URL = APP_BASE_URL ?? process.env.APP_BASE_URL
 
-  if (!DATABASE_URL) {
-    throw new Error("DATABASE_URL is not configured")
-  }
-  if (!BETTER_AUTH_SECRET) {
-    throw new Error("BETTER_AUTH_SECRET is not configured")
-  }
-
   return { DATABASE_URL, BETTER_AUTH_SECRET, APP_BASE_URL }
+}
+
+export const isAuthConfigured = () => {
+  const env = getEnv()
+  return !!(env.DATABASE_URL && env.BETTER_AUTH_SECRET)
 }
 
 export const getAuth = () => {
   const env = getEnv()
+
+  if (!env.DATABASE_URL || !env.BETTER_AUTH_SECRET) {
+    return null
+  }
 
   if (!cachedAuth || cachedDbUrl !== env.DATABASE_URL) {
     const db = getAuthDb(env.DATABASE_URL)
@@ -70,19 +72,16 @@ export const getAuth = () => {
         emailOTP({
           async sendVerificationOTP({ email, otp }) {
             if (isDev) {
-              // In dev mode, log OTP to terminal
               console.log("\n" + "=".repeat(50))
               console.log(`🔐 OTP CODE for ${email}`)
               console.log(`   Code: ${otp}`)
               console.log("=".repeat(50) + "\n")
             } else {
-              // In production, send email via your email provider
-              // TODO: Implement email sending (e.g., Resend, SendGrid, etc.)
               console.log(`[EMAIL] Would send OTP ${otp} to ${email}`)
             }
           },
           otpLength: 6,
-          expiresIn: 300, // 5 minutes
+          expiresIn: 300,
         }),
       ],
     })
@@ -94,6 +93,8 @@ export const getAuth = () => {
 // Lazy proxy that calls getAuth() on each access
 export const auth = new Proxy({} as ReturnType<typeof betterAuth>, {
   get(_target, prop) {
-    return getAuth()[prop as keyof ReturnType<typeof betterAuth>]
+    const authInstance = getAuth()
+    if (!authInstance) return undefined
+    return authInstance[prop as keyof ReturnType<typeof betterAuth>]
   },
 })

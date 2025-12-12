@@ -8,232 +8,339 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root"
-import { Route as UsersRouteImport } from "./routes/users"
-import { Route as LoginRouteImport } from "./routes/login"
-import { Route as ChatRouteImport } from "./routes/chat"
-import { Route as IndexRouteImport } from "./routes/index"
-import { Route as ApiUsersRouteImport } from "./routes/api/users"
-import { Route as ApiChatThreadsRouteImport } from "./routes/api/chat-threads"
-import { Route as ApiChatMessagesRouteImport } from "./routes/api/chat-messages"
-import { Route as DemoStartServerFuncsRouteImport } from "./routes/demo/start.server-funcs"
-import { Route as DemoStartApiRequestRouteImport } from "./routes/demo/start.api-request"
-import { Route as DemoApiNamesRouteImport } from "./routes/demo/api.names"
-import { Route as ApiChatMutationsRouteImport } from "./routes/api/chat/mutations"
-import { Route as ApiChatAiRouteImport } from "./routes/api/chat/ai"
-import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$"
-import { Route as DemoStartSsrIndexRouteImport } from "./routes/demo/start.ssr.index"
-import { Route as DemoStartSsrSpaModeRouteImport } from "./routes/demo/start.ssr.spa-mode"
-import { Route as DemoStartSsrFullSsrRouteImport } from "./routes/demo/start.ssr.full-ssr"
-import { Route as DemoStartSsrDataOnlyRouteImport } from "./routes/demo/start.ssr.data-only"
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsersRouteImport } from './routes/users'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LearnRouteImport } from './routes/learn'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as LearnIndexRouteImport } from './routes/learn/index'
+import { Route as Learn7TrainingRouteImport } from './routes/learn/7-training'
+import { Route as Learn6FullRouteImport } from './routes/learn/6-full'
+import { Route as Learn5BlockRouteImport } from './routes/learn/5-block'
+import { Route as Learn4FfnRouteImport } from './routes/learn/4-ffn'
+import { Route as Learn3MultiheadRouteImport } from './routes/learn/3-multihead'
+import { Route as Learn2AttentionRouteImport } from './routes/learn/2-attention'
+import { Route as Learn1EmbeddingsRouteImport } from './routes/learn/1-embeddings'
+import { Route as ApiUsersRouteImport } from './routes/api/users'
+import { Route as ApiChatThreadsRouteImport } from './routes/api/chat-threads'
+import { Route as ApiChatMessagesRouteImport } from './routes/api/chat-messages'
+import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
+import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
+import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as ApiChatMutationsRouteImport } from './routes/api/chat/mutations'
+import { Route as ApiChatAiRouteImport } from './routes/api/chat/ai'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
+import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
+import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
+import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
 const UsersRoute = UsersRouteImport.update({
-  id: "/users",
-  path: "/users",
+  id: '/users',
+  path: '/users',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
-  id: "/chat",
-  path: "/chat",
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnIndexRoute = LearnIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LearnRoute,
+} as any)
+const Learn7TrainingRoute = Learn7TrainingRouteImport.update({
+  id: '/7-training',
+  path: '/7-training',
+  getParentRoute: () => LearnRoute,
+} as any)
+const Learn6FullRoute = Learn6FullRouteImport.update({
+  id: '/6-full',
+  path: '/6-full',
+  getParentRoute: () => LearnRoute,
+} as any)
+const Learn5BlockRoute = Learn5BlockRouteImport.update({
+  id: '/5-block',
+  path: '/5-block',
+  getParentRoute: () => LearnRoute,
+} as any)
+const Learn4FfnRoute = Learn4FfnRouteImport.update({
+  id: '/4-ffn',
+  path: '/4-ffn',
+  getParentRoute: () => LearnRoute,
+} as any)
+const Learn3MultiheadRoute = Learn3MultiheadRouteImport.update({
+  id: '/3-multihead',
+  path: '/3-multihead',
+  getParentRoute: () => LearnRoute,
+} as any)
+const Learn2AttentionRoute = Learn2AttentionRouteImport.update({
+  id: '/2-attention',
+  path: '/2-attention',
+  getParentRoute: () => LearnRoute,
+} as any)
+const Learn1EmbeddingsRoute = Learn1EmbeddingsRouteImport.update({
+  id: '/1-embeddings',
+  path: '/1-embeddings',
+  getParentRoute: () => LearnRoute,
+} as any)
 const ApiUsersRoute = ApiUsersRouteImport.update({
-  id: "/api/users",
-  path: "/api/users",
+  id: '/api/users',
+  path: '/api/users',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatThreadsRoute = ApiChatThreadsRouteImport.update({
-  id: "/api/chat-threads",
-  path: "/api/chat-threads",
+  id: '/api/chat-threads',
+  path: '/api/chat-threads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatMessagesRoute = ApiChatMessagesRouteImport.update({
-  id: "/api/chat-messages",
-  path: "/api/chat-messages",
+  id: '/api/chat-messages',
+  path: '/api/chat-messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
-  id: "/demo/start/server-funcs",
-  path: "/demo/start/server-funcs",
+  id: '/demo/start/server-funcs',
+  path: '/demo/start/server-funcs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
-  id: "/demo/start/api-request",
-  path: "/demo/start/api-request",
+  id: '/demo/start/api-request',
+  path: '/demo/start/api-request',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
-  id: "/demo/api/names",
-  path: "/demo/api/names",
+  id: '/demo/api/names',
+  path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatMutationsRoute = ApiChatMutationsRouteImport.update({
-  id: "/api/chat/mutations",
-  path: "/api/chat/mutations",
+  id: '/api/chat/mutations',
+  path: '/api/chat/mutations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatAiRoute = ApiChatAiRouteImport.update({
-  id: "/api/chat/ai",
-  path: "/api/chat/ai",
+  id: '/api/chat/ai',
+  path: '/api/chat/ai',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
-  id: "/demo/start/ssr/",
-  path: "/demo/start/ssr/",
+  id: '/demo/start/ssr/',
+  path: '/demo/start/ssr/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({
-  id: "/demo/start/ssr/spa-mode",
-  path: "/demo/start/ssr/spa-mode",
+  id: '/demo/start/ssr/spa-mode',
+  path: '/demo/start/ssr/spa-mode',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartSsrFullSsrRoute = DemoStartSsrFullSsrRouteImport.update({
-  id: "/demo/start/ssr/full-ssr",
-  path: "/demo/start/ssr/full-ssr",
+  id: '/demo/start/ssr/full-ssr',
+  path: '/demo/start/ssr/full-ssr',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
-  id: "/demo/start/ssr/data-only",
-  path: "/demo/start/ssr/data-only",
+  id: '/demo/start/ssr/data-only',
+  path: '/demo/start/ssr/data-only',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute
-  "/chat": typeof ChatRoute
-  "/login": typeof LoginRoute
-  "/users": typeof UsersRoute
-  "/api/chat-messages": typeof ApiChatMessagesRoute
-  "/api/chat-threads": typeof ApiChatThreadsRoute
-  "/api/users": typeof ApiUsersRoute
-  "/api/auth/$": typeof ApiAuthSplatRoute
-  "/api/chat/ai": typeof ApiChatAiRoute
-  "/api/chat/mutations": typeof ApiChatMutationsRoute
-  "/demo/api/names": typeof DemoApiNamesRoute
-  "/demo/start/api-request": typeof DemoStartApiRequestRoute
-  "/demo/start/server-funcs": typeof DemoStartServerFuncsRoute
-  "/demo/start/ssr/data-only": typeof DemoStartSsrDataOnlyRoute
-  "/demo/start/ssr/full-ssr": typeof DemoStartSsrFullSsrRoute
-  "/demo/start/ssr/spa-mode": typeof DemoStartSsrSpaModeRoute
-  "/demo/start/ssr": typeof DemoStartSsrIndexRoute
+  '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/learn': typeof LearnRouteWithChildren
+  '/login': typeof LoginRoute
+  '/users': typeof UsersRoute
+  '/api/chat-messages': typeof ApiChatMessagesRoute
+  '/api/chat-threads': typeof ApiChatThreadsRoute
+  '/api/users': typeof ApiUsersRoute
+  '/learn/1-embeddings': typeof Learn1EmbeddingsRoute
+  '/learn/2-attention': typeof Learn2AttentionRoute
+  '/learn/3-multihead': typeof Learn3MultiheadRoute
+  '/learn/4-ffn': typeof Learn4FfnRoute
+  '/learn/5-block': typeof Learn5BlockRoute
+  '/learn/6-full': typeof Learn6FullRoute
+  '/learn/7-training': typeof Learn7TrainingRoute
+  '/learn/': typeof LearnIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/chat/ai': typeof ApiChatAiRoute
+  '/api/chat/mutations': typeof ApiChatMutationsRoute
+  '/demo/api/names': typeof DemoApiNamesRoute
+  '/demo/start/api-request': typeof DemoStartApiRequestRoute
+  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
+  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
+  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute
-  "/chat": typeof ChatRoute
-  "/login": typeof LoginRoute
-  "/users": typeof UsersRoute
-  "/api/chat-messages": typeof ApiChatMessagesRoute
-  "/api/chat-threads": typeof ApiChatThreadsRoute
-  "/api/users": typeof ApiUsersRoute
-  "/api/auth/$": typeof ApiAuthSplatRoute
-  "/api/chat/ai": typeof ApiChatAiRoute
-  "/api/chat/mutations": typeof ApiChatMutationsRoute
-  "/demo/api/names": typeof DemoApiNamesRoute
-  "/demo/start/api-request": typeof DemoStartApiRequestRoute
-  "/demo/start/server-funcs": typeof DemoStartServerFuncsRoute
-  "/demo/start/ssr/data-only": typeof DemoStartSsrDataOnlyRoute
-  "/demo/start/ssr/full-ssr": typeof DemoStartSsrFullSsrRoute
-  "/demo/start/ssr/spa-mode": typeof DemoStartSsrSpaModeRoute
-  "/demo/start/ssr": typeof DemoStartSsrIndexRoute
+  '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/login': typeof LoginRoute
+  '/users': typeof UsersRoute
+  '/api/chat-messages': typeof ApiChatMessagesRoute
+  '/api/chat-threads': typeof ApiChatThreadsRoute
+  '/api/users': typeof ApiUsersRoute
+  '/learn/1-embeddings': typeof Learn1EmbeddingsRoute
+  '/learn/2-attention': typeof Learn2AttentionRoute
+  '/learn/3-multihead': typeof Learn3MultiheadRoute
+  '/learn/4-ffn': typeof Learn4FfnRoute
+  '/learn/5-block': typeof Learn5BlockRoute
+  '/learn/6-full': typeof Learn6FullRoute
+  '/learn/7-training': typeof Learn7TrainingRoute
+  '/learn': typeof LearnIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/chat/ai': typeof ApiChatAiRoute
+  '/api/chat/mutations': typeof ApiChatMutationsRoute
+  '/demo/api/names': typeof DemoApiNamesRoute
+  '/demo/start/api-request': typeof DemoStartApiRequestRoute
+  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
+  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
+  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  "/": typeof IndexRoute
-  "/chat": typeof ChatRoute
-  "/login": typeof LoginRoute
-  "/users": typeof UsersRoute
-  "/api/chat-messages": typeof ApiChatMessagesRoute
-  "/api/chat-threads": typeof ApiChatThreadsRoute
-  "/api/users": typeof ApiUsersRoute
-  "/api/auth/$": typeof ApiAuthSplatRoute
-  "/api/chat/ai": typeof ApiChatAiRoute
-  "/api/chat/mutations": typeof ApiChatMutationsRoute
-  "/demo/api/names": typeof DemoApiNamesRoute
-  "/demo/start/api-request": typeof DemoStartApiRequestRoute
-  "/demo/start/server-funcs": typeof DemoStartServerFuncsRoute
-  "/demo/start/ssr/data-only": typeof DemoStartSsrDataOnlyRoute
-  "/demo/start/ssr/full-ssr": typeof DemoStartSsrFullSsrRoute
-  "/demo/start/ssr/spa-mode": typeof DemoStartSsrSpaModeRoute
-  "/demo/start/ssr/": typeof DemoStartSsrIndexRoute
+  '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/learn': typeof LearnRouteWithChildren
+  '/login': typeof LoginRoute
+  '/users': typeof UsersRoute
+  '/api/chat-messages': typeof ApiChatMessagesRoute
+  '/api/chat-threads': typeof ApiChatThreadsRoute
+  '/api/users': typeof ApiUsersRoute
+  '/learn/1-embeddings': typeof Learn1EmbeddingsRoute
+  '/learn/2-attention': typeof Learn2AttentionRoute
+  '/learn/3-multihead': typeof Learn3MultiheadRoute
+  '/learn/4-ffn': typeof Learn4FfnRoute
+  '/learn/5-block': typeof Learn5BlockRoute
+  '/learn/6-full': typeof Learn6FullRoute
+  '/learn/7-training': typeof Learn7TrainingRoute
+  '/learn/': typeof LearnIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/chat/ai': typeof ApiChatAiRoute
+  '/api/chat/mutations': typeof ApiChatMutationsRoute
+  '/demo/api/names': typeof DemoApiNamesRoute
+  '/demo/start/api-request': typeof DemoStartApiRequestRoute
+  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
+  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
+  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/chat"
-    | "/login"
-    | "/users"
-    | "/api/chat-messages"
-    | "/api/chat-threads"
-    | "/api/users"
-    | "/api/auth/$"
-    | "/api/chat/ai"
-    | "/api/chat/mutations"
-    | "/demo/api/names"
-    | "/demo/start/api-request"
-    | "/demo/start/server-funcs"
-    | "/demo/start/ssr/data-only"
-    | "/demo/start/ssr/full-ssr"
-    | "/demo/start/ssr/spa-mode"
-    | "/demo/start/ssr"
+    | '/'
+    | '/chat'
+    | '/learn'
+    | '/login'
+    | '/users'
+    | '/api/chat-messages'
+    | '/api/chat-threads'
+    | '/api/users'
+    | '/learn/1-embeddings'
+    | '/learn/2-attention'
+    | '/learn/3-multihead'
+    | '/learn/4-ffn'
+    | '/learn/5-block'
+    | '/learn/6-full'
+    | '/learn/7-training'
+    | '/learn/'
+    | '/api/auth/$'
+    | '/api/chat/ai'
+    | '/api/chat/mutations'
+    | '/demo/api/names'
+    | '/demo/start/api-request'
+    | '/demo/start/server-funcs'
+    | '/demo/start/ssr/data-only'
+    | '/demo/start/ssr/full-ssr'
+    | '/demo/start/ssr/spa-mode'
+    | '/demo/start/ssr'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/chat"
-    | "/login"
-    | "/users"
-    | "/api/chat-messages"
-    | "/api/chat-threads"
-    | "/api/users"
-    | "/api/auth/$"
-    | "/api/chat/ai"
-    | "/api/chat/mutations"
-    | "/demo/api/names"
-    | "/demo/start/api-request"
-    | "/demo/start/server-funcs"
-    | "/demo/start/ssr/data-only"
-    | "/demo/start/ssr/full-ssr"
-    | "/demo/start/ssr/spa-mode"
-    | "/demo/start/ssr"
+    | '/'
+    | '/chat'
+    | '/login'
+    | '/users'
+    | '/api/chat-messages'
+    | '/api/chat-threads'
+    | '/api/users'
+    | '/learn/1-embeddings'
+    | '/learn/2-attention'
+    | '/learn/3-multihead'
+    | '/learn/4-ffn'
+    | '/learn/5-block'
+    | '/learn/6-full'
+    | '/learn/7-training'
+    | '/learn'
+    | '/api/auth/$'
+    | '/api/chat/ai'
+    | '/api/chat/mutations'
+    | '/demo/api/names'
+    | '/demo/start/api-request'
+    | '/demo/start/server-funcs'
+    | '/demo/start/ssr/data-only'
+    | '/demo/start/ssr/full-ssr'
+    | '/demo/start/ssr/spa-mode'
+    | '/demo/start/ssr'
   id:
-    | "__root__"
-    | "/"
-    | "/chat"
-    | "/login"
-    | "/users"
-    | "/api/chat-messages"
-    | "/api/chat-threads"
-    | "/api/users"
-    | "/api/auth/$"
-    | "/api/chat/ai"
-    | "/api/chat/mutations"
-    | "/demo/api/names"
-    | "/demo/start/api-request"
-    | "/demo/start/server-funcs"
-    | "/demo/start/ssr/data-only"
-    | "/demo/start/ssr/full-ssr"
-    | "/demo/start/ssr/spa-mode"
-    | "/demo/start/ssr/"
+    | '__root__'
+    | '/'
+    | '/chat'
+    | '/learn'
+    | '/login'
+    | '/users'
+    | '/api/chat-messages'
+    | '/api/chat-threads'
+    | '/api/users'
+    | '/learn/1-embeddings'
+    | '/learn/2-attention'
+    | '/learn/3-multihead'
+    | '/learn/4-ffn'
+    | '/learn/5-block'
+    | '/learn/6-full'
+    | '/learn/7-training'
+    | '/learn/'
+    | '/api/auth/$'
+    | '/api/chat/ai'
+    | '/api/chat/mutations'
+    | '/demo/api/names'
+    | '/demo/start/api-request'
+    | '/demo/start/server-funcs'
+    | '/demo/start/ssr/data-only'
+    | '/demo/start/ssr/full-ssr'
+    | '/demo/start/ssr/spa-mode'
+    | '/demo/start/ssr/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
+  LearnRoute: typeof LearnRouteWithChildren
   LoginRoute: typeof LoginRoute
   UsersRoute: typeof UsersRoute
   ApiChatMessagesRoute: typeof ApiChatMessagesRoute
@@ -251,133 +358,221 @@ export interface RootRouteChildren {
   DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/users": {
-      id: "/users"
-      path: "/users"
-      fullPath: "/users"
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
       preLoaderRoute: typeof UsersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/login": {
-      id: "/login"
-      path: "/login"
-      fullPath: "/login"
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/chat": {
-      id: "/chat"
-      path: "/chat"
-      fullPath: "/chat"
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
       preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/": {
-      id: "/"
-      path: "/"
-      fullPath: "/"
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/users": {
-      id: "/api/users"
-      path: "/api/users"
-      fullPath: "/api/users"
+    '/learn/': {
+      id: '/learn/'
+      path: '/'
+      fullPath: '/learn/'
+      preLoaderRoute: typeof LearnIndexRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/7-training': {
+      id: '/learn/7-training'
+      path: '/7-training'
+      fullPath: '/learn/7-training'
+      preLoaderRoute: typeof Learn7TrainingRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/6-full': {
+      id: '/learn/6-full'
+      path: '/6-full'
+      fullPath: '/learn/6-full'
+      preLoaderRoute: typeof Learn6FullRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/5-block': {
+      id: '/learn/5-block'
+      path: '/5-block'
+      fullPath: '/learn/5-block'
+      preLoaderRoute: typeof Learn5BlockRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/4-ffn': {
+      id: '/learn/4-ffn'
+      path: '/4-ffn'
+      fullPath: '/learn/4-ffn'
+      preLoaderRoute: typeof Learn4FfnRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/3-multihead': {
+      id: '/learn/3-multihead'
+      path: '/3-multihead'
+      fullPath: '/learn/3-multihead'
+      preLoaderRoute: typeof Learn3MultiheadRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/2-attention': {
+      id: '/learn/2-attention'
+      path: '/2-attention'
+      fullPath: '/learn/2-attention'
+      preLoaderRoute: typeof Learn2AttentionRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/1-embeddings': {
+      id: '/learn/1-embeddings'
+      path: '/1-embeddings'
+      fullPath: '/learn/1-embeddings'
+      preLoaderRoute: typeof Learn1EmbeddingsRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/api/users': {
+      id: '/api/users'
+      path: '/api/users'
+      fullPath: '/api/users'
       preLoaderRoute: typeof ApiUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/chat-threads": {
-      id: "/api/chat-threads"
-      path: "/api/chat-threads"
-      fullPath: "/api/chat-threads"
+    '/api/chat-threads': {
+      id: '/api/chat-threads'
+      path: '/api/chat-threads'
+      fullPath: '/api/chat-threads'
       preLoaderRoute: typeof ApiChatThreadsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/chat-messages": {
-      id: "/api/chat-messages"
-      path: "/api/chat-messages"
-      fullPath: "/api/chat-messages"
+    '/api/chat-messages': {
+      id: '/api/chat-messages'
+      path: '/api/chat-messages'
+      fullPath: '/api/chat-messages'
       preLoaderRoute: typeof ApiChatMessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/demo/start/server-funcs": {
-      id: "/demo/start/server-funcs"
-      path: "/demo/start/server-funcs"
-      fullPath: "/demo/start/server-funcs"
+    '/demo/start/server-funcs': {
+      id: '/demo/start/server-funcs'
+      path: '/demo/start/server-funcs'
+      fullPath: '/demo/start/server-funcs'
       preLoaderRoute: typeof DemoStartServerFuncsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/demo/start/api-request": {
-      id: "/demo/start/api-request"
-      path: "/demo/start/api-request"
-      fullPath: "/demo/start/api-request"
+    '/demo/start/api-request': {
+      id: '/demo/start/api-request'
+      path: '/demo/start/api-request'
+      fullPath: '/demo/start/api-request'
       preLoaderRoute: typeof DemoStartApiRequestRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/demo/api/names": {
-      id: "/demo/api/names"
-      path: "/demo/api/names"
-      fullPath: "/demo/api/names"
+    '/demo/api/names': {
+      id: '/demo/api/names'
+      path: '/demo/api/names'
+      fullPath: '/demo/api/names'
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/chat/mutations": {
-      id: "/api/chat/mutations"
-      path: "/api/chat/mutations"
-      fullPath: "/api/chat/mutations"
+    '/api/chat/mutations': {
+      id: '/api/chat/mutations'
+      path: '/api/chat/mutations'
+      fullPath: '/api/chat/mutations'
       preLoaderRoute: typeof ApiChatMutationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/chat/ai": {
-      id: "/api/chat/ai"
-      path: "/api/chat/ai"
-      fullPath: "/api/chat/ai"
+    '/api/chat/ai': {
+      id: '/api/chat/ai'
+      path: '/api/chat/ai'
+      fullPath: '/api/chat/ai'
       preLoaderRoute: typeof ApiChatAiRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/auth/$": {
-      id: "/api/auth/$"
-      path: "/api/auth/$"
-      fullPath: "/api/auth/$"
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/demo/start/ssr/": {
-      id: "/demo/start/ssr/"
-      path: "/demo/start/ssr"
-      fullPath: "/demo/start/ssr"
+    '/demo/start/ssr/': {
+      id: '/demo/start/ssr/'
+      path: '/demo/start/ssr'
+      fullPath: '/demo/start/ssr'
       preLoaderRoute: typeof DemoStartSsrIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/demo/start/ssr/spa-mode": {
-      id: "/demo/start/ssr/spa-mode"
-      path: "/demo/start/ssr/spa-mode"
-      fullPath: "/demo/start/ssr/spa-mode"
+    '/demo/start/ssr/spa-mode': {
+      id: '/demo/start/ssr/spa-mode'
+      path: '/demo/start/ssr/spa-mode'
+      fullPath: '/demo/start/ssr/spa-mode'
       preLoaderRoute: typeof DemoStartSsrSpaModeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/demo/start/ssr/full-ssr": {
-      id: "/demo/start/ssr/full-ssr"
-      path: "/demo/start/ssr/full-ssr"
-      fullPath: "/demo/start/ssr/full-ssr"
+    '/demo/start/ssr/full-ssr': {
+      id: '/demo/start/ssr/full-ssr'
+      path: '/demo/start/ssr/full-ssr'
+      fullPath: '/demo/start/ssr/full-ssr'
       preLoaderRoute: typeof DemoStartSsrFullSsrRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/demo/start/ssr/data-only": {
-      id: "/demo/start/ssr/data-only"
-      path: "/demo/start/ssr/data-only"
-      fullPath: "/demo/start/ssr/data-only"
+    '/demo/start/ssr/data-only': {
+      id: '/demo/start/ssr/data-only'
+      path: '/demo/start/ssr/data-only'
+      fullPath: '/demo/start/ssr/data-only'
       preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
+interface LearnRouteChildren {
+  Learn1EmbeddingsRoute: typeof Learn1EmbeddingsRoute
+  Learn2AttentionRoute: typeof Learn2AttentionRoute
+  Learn3MultiheadRoute: typeof Learn3MultiheadRoute
+  Learn4FfnRoute: typeof Learn4FfnRoute
+  Learn5BlockRoute: typeof Learn5BlockRoute
+  Learn6FullRoute: typeof Learn6FullRoute
+  Learn7TrainingRoute: typeof Learn7TrainingRoute
+  LearnIndexRoute: typeof LearnIndexRoute
+}
+
+const LearnRouteChildren: LearnRouteChildren = {
+  Learn1EmbeddingsRoute: Learn1EmbeddingsRoute,
+  Learn2AttentionRoute: Learn2AttentionRoute,
+  Learn3MultiheadRoute: Learn3MultiheadRoute,
+  Learn4FfnRoute: Learn4FfnRoute,
+  Learn5BlockRoute: Learn5BlockRoute,
+  Learn6FullRoute: Learn6FullRoute,
+  Learn7TrainingRoute: Learn7TrainingRoute,
+  LearnIndexRoute: LearnIndexRoute,
+}
+
+const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
+  LearnRoute: LearnRouteWithChildren,
   LoginRoute: LoginRoute,
   UsersRoute: UsersRoute,
   ApiChatMessagesRoute: ApiChatMessagesRoute,
@@ -398,9 +593,9 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx"
-import type { createStart } from "@tanstack/react-start"
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
