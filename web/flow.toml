@@ -4,7 +4,6 @@ version = 1
 node = "node"
 pnpm = "pnpm"
 docker = "docker"
-fast = "github.com/1focus-ai/fast"
 
 [[tasks]]
 name = "setup"
@@ -350,10 +349,3 @@ echo "✓ Services stopped"
 description = "Stop local Postgres, Neon proxy, and Electric services."
 dependencies = ["docker"]
 shortcuts = ["ss"]
-
-[[tasks]]
-name = "commit"
-command = "fast commitPush"
-description = "Commit with AI"
-dependencies = ["fast"]
-delegate_to_hub = true

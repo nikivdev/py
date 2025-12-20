@@ -231,6 +231,33 @@ echo "Deployed codex-py to ${TARGET}"
 description = "Deploy codex-sdk CLI as 'codex-py' to ~/bin"
 
 [[tasks]]
+name = "deploy-fpy"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+bin_dir="$HOME/bin"
+bin_name="fpy"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+mkdir -p "$bin_dir"
+
+# Sync dependencies first
+"$uv_bin" sync --python "$python_spec"
+
+# Symlink as fpy
+rm -f "$bin_dir/$bin_name"
+ln -s "$(pwd)/.venv/bin/flow" "$bin_dir/$bin_name"
+
+echo "Installed CLI to $bin_dir/$bin_name"
+"""
+description = "Deploy flow CLI as 'fpy' to ~/bin."
+
+[[tasks]]
 name = "infra"
 command = """
 set -euo pipefail
@@ -412,3 +439,42 @@ esac
 "$uv_bin" run --python "$python_spec" python "$file"
 """
 description = "Transformer deep-dive lessons (1-7, all, or topic name)"
+
+[[tasks]]
+name = "web"
+command = """
+set -euo pipefail
+cd web
+
+# Install deps if missing
+if [ ! -d "node_modules" ]; then
+  echo "Installing dependencies..."
+  pnpm install
+fi
+
+echo "Starting web dev server on http://localhost:8712"
+echo "Learn transformers: http://localhost:8712/learn"
+echo ""
+pnpm --filter @gen/web run dev
+"""
+description = "Start the web dev server on port 8712"
+
+[[tasks]]
+name = "web-learn"
+command = """
+set -euo pipefail
+cd web
+
+# Install deps if missing
+if [ ! -d "node_modules" ]; then
+  echo "Installing dependencies..."
+  pnpm install
+fi
+
+echo "Opening transformer visualizations..."
+echo "Server: http://localhost:8712/learn"
+echo ""
+(sleep 2 && open "http://localhost:8712/learn" 2>/dev/null || true) &
+pnpm --filter @gen/web run dev
+"""
+description = "Start web server and open transformer learn visualizations"

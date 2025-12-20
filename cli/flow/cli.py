@@ -113,23 +113,70 @@ def run(argv: Sequence[str] | None = None) -> int:
     return int(result or 0)
 
 
-@command(
-    "hello",
-    help="Say hello to someone.",
-    configure=lambda parser: parser.add_argument(
-        "name",
+def _configure_undo(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "count",
+        type=int,
         nargs="?",
-        default="world",
-        help="Who to greet.",
-    ),
+        default=1,
+        help="Number of commits to undo (default: 1).",
+    )
+
+
+@command(
+    "undo",
+    help="Undo commits locally (git reset --hard).",
+    configure=_configure_undo,
 )
-def hello(args: argparse.Namespace) -> int:
-    print(f"Hello, {args.name}!")
+def undo(args: argparse.Namespace) -> int:
+    count = args.count
+    if count < 1:
+        print("Count must be at least 1.", file=sys.stderr)
+        return 1
+
+    result = subprocess.run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print("Not in a git repository.", file=sys.stderr)
+        return 1
+    branch = result.stdout.strip()
+
+    result = subprocess.run(
+        ["git", "log", f"-{count}", "--oneline"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print("Failed to get commit history.", file=sys.stderr)
+        return 1
+
+    commits = result.stdout.strip()
+    if not commits:
+        print("No commits to undo.", file=sys.stderr)
+        return 1
+
+    print(f"Undoing {count} commit(s) on {branch}:")
+    print(commits)
+    print()
+
+    result = subprocess.run(["git", "reset", "--hard", f"HEAD~{count}"])
+    if result.returncode != 0:
+        print("Failed to reset commits.", file=sys.stderr)
+        return 1
+
+    print(f"Undid {count} commit(s). Run 'git push --force' to push.")
     return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    return run(argv)
+    try:
+        return run(argv)
+    except KeyboardInterrupt:
+        print()
+        return 130
 
 
 def _command_entries() -> list[CommandSpec]:
