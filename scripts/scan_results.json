@@ -1,0 +1,86 @@
+{
+  "total_bytes": 190170988544,
+  "total_human": "177.1 GB",
+  "items": [
+    {
+      "name": "Huggingface Cache",
+      "path": "/Users/nikiv/.cache/huggingface",
+      "size_bytes": 165792677888,
+      "size_human": "154.4 GB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/.cache/huggingface\""
+    },
+    {
+      "name": "Cursor Cache",
+      "path": "/Users/nikiv/Library/Application Support/Cursor/CachedData",
+      "size_bytes": 10693791744,
+      "size_human": "10.0 GB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Application Support/Cursor/CachedData\""
+    },
+    {
+      "name": "Docker",
+      "path": "/Users/nikiv/Library/Containers/com.docker.docker/Data",
+      "size_bytes": 7191539712,
+      "size_human": "6.7 GB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Containers/com.docker.docker/Data\""
+    },
+    {
+      "name": "Chrome Cache",
+      "path": "/Users/nikiv/Library/Caches/Google",
+      "size_bytes": 1677058048,
+      "size_human": "1.6 GB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Caches/Google\""
+    },
+    {
+      "name": "Arc Cache",
+      "path": "/Users/nikiv/Library/Caches/Arc",
+      "size_bytes": 1278947328,
+      "size_human": "1.2 GB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Caches/Arc\""
+    },
+    {
+      "name": "User Logs",
+      "path": "/Users/nikiv/Library/Logs",
+      "size_bytes": 1246957568,
+      "size_human": "1.2 GB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Logs\""
+    },
+    {
+      "name": "Slack Cache",
+      "path": "/Users/nikiv/Library/Application Support/Slack/Cache",
+      "size_bytes": 898260992,
+      "size_human": "856.6 MB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Application Support/Slack/Cache\""
+    },
+    {
+      "name": "Ollama Models",
+      "path": "/Users/nikiv/.ollama/models",
+      "size_bytes": 669630464,
+      "size_human": "638.6 MB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/.ollama/models\""
+    },
+    {
+      "name": "Discord Cache",
+      "path": "/Users/nikiv/Library/Application Support/discord/Cache",
+      "size_bytes": 382926848,
+      "size_human": "365.2 MB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Application Support/discord/Cache\""
+    },
+    {
+      "name": "Go Build Cache",
+      "path": "/Users/nikiv/Library/Caches/go-build",
+      "size_bytes": 339197952,
+      "size_human": "323.5 MB",
+      "category": "delete",
+      "command": "rm -rf \"/Users/nikiv/Library/Caches/go-build\""
+    }
+  ]
+}

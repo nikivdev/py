@@ -137,6 +137,108 @@ export UV_PYTHON="${UV_PYTHON:-$python_spec}"
 description = "Run Codex SDK CLI (passes CLI args through)."
 
 [[tasks]]
+name = "disk-report"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" python scripts/disk_report.py "$@"
+"""
+description = "Report disk usage for the root volume."
+
+[[tasks]]
+name = "xcode-clean"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" python scripts/xcode_cleanup.py "$@"
+"""
+description = "Delete safe Xcode build artifacts and caches (DerivedData + Xcode caches only)."
+
+[[tasks]]
+name = "storage-scan"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" python scripts/storage_scan.py "$@"
+"""
+description = "Scan for storage candidates (delete/move) on macOS."
+
+[[tasks]]
+name = "zip-paths"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" python i/zip_paths.py "$@"
+"""
+description = "Zip files/folders for safe archiving (uses i/zip_paths.py)."
+
+[[tasks]]
+name = "archive-zip"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" python scripts/archive_to_s3.py --no-upload "$@"
+"""
+description = "Zip files/folders into zip-staging without uploading."
+
+[[tasks]]
+name = "archive-upload"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+"$uv_bin" run --python "$python_spec" python scripts/archive_to_s3.py "$@"
+"""
+description = "Zip files/folders and upload to S3 using aws cli."
+
+[[tasks]]
 name = "deploy"
 command = """
 set -euo pipefail
