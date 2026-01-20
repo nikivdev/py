@@ -33,3 +33,5 @@ build
 wheels
 *.egg-info
 .venv
+.ai/internal/
+.ai/commit-checkpoints.json
