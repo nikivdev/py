@@ -1,0 +1,1 @@
+"""why-crash CLI package."""

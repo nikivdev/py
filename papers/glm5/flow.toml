@@ -1,0 +1,21 @@
+version = 1
+name = "glm5"
+
+[flow]
+primary_task = "run"
+
+[[tasks]]
+name = "run"
+command = "uv run glm5"
+
+[[tasks]]
+name = "test"
+command = "uv run pytest"
+
+[[tasks]]
+name = "lint"
+command = "uv run ruff check ."
+
+[[tasks]]
+name = "fix"
+command = "uv run ruff check --fix ."

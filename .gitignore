@@ -27,11 +27,24 @@ private
 .blade
 .npm-cache
 
-__pycache__
+__pycache__/
 *.py[oc]
+.coverage
+.coverage.*
+.mypy_cache/
+.pytest_cache/
+.python-version
+.ruff_cache/
 build
 wheels
 *.egg-info
-.venv
+.venv/
 .ai/internal/
 .ai/commit-checkpoints.json
+
+# flow
+.ai/web/
+.ai/skills/
+.claude/
+.codex/
+.flox/

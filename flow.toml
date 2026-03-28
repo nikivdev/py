@@ -120,6 +120,26 @@ export UV_PYTHON="${UV_PYTHON:-$python_spec}"
 description = "Run Claude SDK CLI (passes CLI args through)."
 
 [[tasks]]
+name = "why-crash-harden"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+export UV_PYTHON="${UV_PYTHON:-$python_spec}"
+if [ "${1:-}" = "--" ]; then
+  shift
+fi
+"$uv_bin" run --python "$python_spec" why-crash --harden "$@"
+"""
+description = "Write safety wrappers (fish/proxy-off) to ~/bin."
+
+[[tasks]]
 name = "codex-sdk"
 command = """
 set -euo pipefail
@@ -331,6 +351,37 @@ ln -s "${VENV_BIN}/codex-sdk" "${TARGET}"
 echo "Deployed codex-py to ${TARGET}"
 """
 description = "Deploy codex-sdk CLI as 'codex-py' to ~/bin"
+
+[[tasks]]
+name = "deploy-why-crash"
+command = """
+set -euo pipefail
+uv_bin="${UV_BIN:-uv}"
+python_spec="${PYTHON_SPEC:-3.13}"
+
+if ! command -v "$uv_bin" >/dev/null 2>&1; then
+  echo "uv executable '$uv_bin' not found in PATH."
+  exit 1
+fi
+
+INSTALL_DIR="${INSTALL_DIR:-$HOME/bin}"
+mkdir -p "${INSTALL_DIR}"
+
+# Sync dependencies first
+"$uv_bin" sync --python "$python_spec"
+
+# Get the venv bin path
+VENV_BIN="$(pwd)/.venv/bin"
+
+# Symlink as why-crash
+TARGET="${INSTALL_DIR}/why-crash"
+echo "Linking ${TARGET} -> ${VENV_BIN}/why-crash"
+rm -f "${TARGET}"
+ln -s "${VENV_BIN}/why-crash" "${TARGET}"
+
+echo "Deployed why-crash to ${TARGET}"
+"""
+description = "Deploy why-crash CLI to ~/bin"
 
 [[tasks]]
 name = "deploy-fpy"

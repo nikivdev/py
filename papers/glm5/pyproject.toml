@@ -1,0 +1,36 @@
+[project]
+name = "glm5"
+version = "0.1.0"
+description = "GLM-5: from Vibe Coding to Agentic Engineering — paper analysis and experiments"
+readme = "readme.md"
+authors = [
+    { name = "Nikita", email = "github@nikiv.dev" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+glm5 = "glm5:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.11.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
